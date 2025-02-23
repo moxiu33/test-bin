@@ -1,0 +1,26 @@
+#!/sbin/sh
+# Author: moxiu33 (moxiu_contact@protonmail.com)
+
+OUTFD=$2
+ZIP=$3
+
+SDAPATH="/dev/block/sda"
+SDEPATH="/dev/block/sde"
+SGDISKBIN="/tmp/krtmp/sgdisk"
+
+mkdir /tmp/krtmp
+cd /tmp/krtmp
+unzip -o "$ZIP"
+chmod 0755 $SGDISKBIN
+
+$SGDISKBIN --delete=21 $SDAPATH
+$SGDISKBIN --delete=48 $SDEPATH
+
+$SGDISKBIN --new 0:0:+5G --change-name=21:system --typecode=21:97D7B011-54DA-4835-B3C4-917AD6E73D74 $SDAPATH
+$SGDISKBIN --new 0:0:0 --change-name=22:userdata --typecode=22:1B81E7E6-F50D-419B-A739-2AEEF8DA3335 $SDAPATH
+
+sleep 3
+
+reboot recovery
+
+exit 0
